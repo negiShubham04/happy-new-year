@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Happy New Year 🌸</title>
+<title>Happy New Year ✨</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -29,27 +29,14 @@
     transform: translate(-50%, -50%);
     text-align: center;
     z-index: 2;
-    padding: 20px;
+    padding: 25px;
+    max-width: 90%;
   }
 
   h1 {
     font-size: 3rem;
     margin-bottom: 10px;
     text-shadow: 0 0 20px gold;
-  }
-
-  .blessing {
-    font-size: 1.2rem;
-    margin-top: 15px;
-    opacity: 0;
-    transition: opacity 2s ease;
-  }
-
-  .from {
-    margin-top: 25px;
-    font-size: 1rem;
-    opacity: 0;
-    transition: opacity 2s ease;
   }
 
   button {
@@ -63,6 +50,21 @@
     color: #000;
     box-shadow: 0 0 15px gold;
   }
+
+  .blessing {
+    font-size: 1.2rem;
+    margin-top: 18px;
+    opacity: 0;
+    transition: opacity 2s ease;
+    line-height: 1.5;
+  }
+
+  .from {
+    margin-top: 25px;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 2s ease;
+  }
 </style>
 </head>
 
@@ -70,24 +72,23 @@
 
 <canvas id="canvas"></canvas>
 
-<div class="content">
-  <h1 id="title">🎉 Happy New Year 🎉</h1>
+<div class="content" id="content">
+  <h1 id="title">✨ Happy New Year ✨</h1>
 
   <button id="startBtn">▶ Tap to start celebration</button>
 
   <div class="blessing" id="blessing">
-    🌸 May this New Year bring good health, peace, happiness  
-    and prosperity to you and your family 🌸
+    🌼 May this New Year bring good health, peace, happiness  
+    and prosperity to you and your family 🌼
   </div>
 
   <div class="from" id="from">
-    🙏 With love,  
-    <br>Shubham
+    🙏 With love,<br>Shubham
   </div>
 </div>
 
-<!-- Soft music (replace mp3 if you want) -->
-<audio id="music" loop>
+<!-- 🎵 Background Music -->
+<audio id="music" preload="auto" loop>
   <source src="https://cdn.pixabay.com/audio/2022/10/30/audio_69c1e4c1cc.mp3" type="audio/mpeg">
 </audio>
 
@@ -97,56 +98,74 @@
   const name = params.get("name");
   if (name) {
     document.getElementById("title").innerText =
-      `🎉 Happy New Year ${name} 🎉`;
+      `✨ Happy New Year ${name} ✨`;
   }
 
-  /* ---------- Flower Animation ---------- */
+  /* ---------- Canvas Setup ---------- */
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
 
-  const flowers = [];
-  const flowerEmoji = "🌸";
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
 
-  for (let i = 0; i < 120; i++) {
-    flowers.push({
+  /* ---------- Safe Zone (keeps text readable) ---------- */
+  function isInSafeZone(x, y) {
+    const rect = document.getElementById("content").getBoundingClientRect();
+    return (
+      x > rect.left - 40 &&
+      x < rect.right + 40 &&
+      y > rect.top - 40 &&
+      y < rect.bottom + 40
+    );
+  }
+
+  /* ---------- Falling Emojis ---------- */
+  const emojis = ["✨", "💛", "⭐", "🪔"];
+  const particles = [];
+
+  for (let i = 0; i < 90; i++) {
+    particles.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      size: 18 + Math.random() * 12,
-      speed: 0.5 + Math.random() * 1
+      size: 16 + Math.random() * 10,
+      speed: 0.4 + Math.random() * 0.9,
+      emoji: emojis[Math.floor(Math.random() * emojis.length)]
     });
   }
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    flowers.forEach(f => {
-      ctx.font = `${f.size}px serif`;
-      ctx.fillText(flowerEmoji, f.x, f.y);
-      f.y += f.speed;
-      if (f.y > canvas.height) {
-        f.y = -20;
-        f.x = Math.random() * canvas.width;
+
+    particles.forEach(p => {
+      p.y += p.speed;
+
+      if (p.y > canvas.height) {
+        p.y = -20;
+        p.x = Math.random() * canvas.width;
+      }
+
+      if (!isInSafeZone(p.x, p.y)) {
+        ctx.font = `${p.size}px serif`;
+        ctx.fillText(p.emoji, p.x, p.y);
       }
     });
+
     requestAnimationFrame(animate);
   }
-
   animate();
 
-  window.onresize = () => {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-  };
+  /* ---------- Start Celebration (MUSIC FIX) ---------- */
+  const audio = document.getElementById("music");
 
-  /* ---------- Start Celebration ---------- */
-  document.getElementById("startBtn").onclick = () => {
-    document.getElementById("music").play();
+  document.getElementById("startBtn").addEventListener("click", () => {
+    audio.load();           // REQUIRED for mobile
+    audio.volume = 0.8;
+    audio.play().catch(() => {});
+
     document.getElementById("blessing").style.opacity = 1;
     document.getElementById("from").style.opacity = 1;
-    document.getElementById("startBtn").style.display = "none";
-  };
-</script>
-
-</body>
-</html>
+    document.getElementById("sta

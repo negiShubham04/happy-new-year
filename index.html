@@ -1,71 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Happy New Year ✨</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Happy New Year ✨</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-  body {
-    margin: 0;
-    height: 100vh;
-    overflow: hidden;
-    background: radial-gradient(circle at top, #1a2a6c, #000);
-    font-family: "Segoe UI", sans-serif;
-    color: #fff;
-  }
+    <style>
+        body {
+          margin: 0;
+          height: 100vh;
+          overflow: hidden;
+          background: radial-gradient(circle at top, #1a2a6c, #000);
+          font-family: "Segoe UI", sans-serif;
+          color: #fff;
+        }
 
-  canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1;
-  }
+        canvas {
+          position: fixed;
+          top: 0;
+          left: 0;
+          z-index: 1;
+        }
 
-  .content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 2;
-    padding: 25px;
-    max-width: 90%;
-  }
+        .content {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          z-index: 2;
+          padding: 25px;
+          max-width: 90%;
+        }
 
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    text-shadow: 0 0 20px gold;
-  }
+        h1 {
+          font-size: 3rem;
+          text-shadow: 0 0 20px gold;
+          margin-bottom: 10px;
+        }
 
-  button {
-    margin-top: 20px;
-    padding: 14px 28px;
-    font-size: 1.1rem;
-    border-radius: 30px;
-    border: none;
-    cursor: pointer;
-    background: gold;
-    color: #000;
-    box-shadow: 0 0 15px gold;
-  }
+        input {
+          padding: 12px 16px;
+          font-size: 1rem;
+          border-radius: 25px;
+          border: none;
+          outline: none;
+          width: 220px;
+          text-align: center;
+          margin-top: 10px;
+        }
 
-  .blessing {
-    font-size: 1.2rem;
-    margin-top: 18px;
-    opacity: 0;
-    transition: opacity 2s ease;
-    line-height: 1.5;
-  }
+        button {
+          margin-top: 18px;
+          padding: 14px 28px;
+          font-size: 1.1rem;
+          border-radius: 30px;
+          border: none;
+          cursor: pointer;
+          background: gold;
+          color: #000;
+          box-shadow: 0 0 15px gold;
+        }
 
-  .from {
-    margin-top: 25px;
-    font-size: 1rem;
-    opacity: 0;
-    transition: opacity 2s ease;
-  }
-</style>
+        .blessing, .from {
+          opacity: 0;
+          transition: opacity 2s ease;
+          margin-top: 18px;
+          line-height: 1.5;
+        }
+    </style>
 </head>
 
 <body>
@@ -73,103 +76,106 @@
 <canvas id="canvas"></canvas>
 
 <div class="content" id="content">
-  <h1 id="title">✨ Happy New Year 2026 ✨</h1>
+    <h1 id="title">✨ Happy New Year 2026 ✨</h1>
 
-  <button id="startBtn">▶ Tap to start celebration</button>
+    <!-- Name Input -->
+    <div id="nameBox">
+        <input id="nameInput" placeholder="Your name please 🌸" />
+        <br>
+        <button id="startBtn">▶ Tap to start</button>
+    </div>
 
-  <div class="blessing" id="blessing">
-    🌼 May this New Year bring good health, peace, happiness  
-    and prosperity to you and your family 🌼
-  </div>
+    <div class="blessing" id="blessing">
+        🌼 May this New Year bring good health, peace, happiness
+        and prosperity to you and your family 🌼
+    </div>
 
-  <div class="from" id="from">
-    🙏 From, <br>Shubham Negi
-  </div>
+    <div class="from" id="from">
+        🙏 From,<br>Shubham Negi
+    </div>
 </div>
 
 <!-- 🎵 Background Music -->
 <audio id="music" preload="auto" loop>
-  <source src="song.mp3" type="audio/mpeg">
+    <source src="song.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-  /* ---------- Name Personalization ---------- */
-  const params = new URLSearchParams(window.location.search);
-  const name = params.get("name");
-  if (name) {
-    document.getElementById("title").innerText =
-      `✨ Happy New Year ${name} ✨`;
-  }
+    /* ---------- Canvas Setup ---------- */
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
 
-  /* ---------- Canvas Setup ---------- */
-  const canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d");
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener("resize", resize);
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener("resize", resize);
+    /* ---------- Safe Zone ---------- */
+    function isInSafeZone(x, y) {
+      const rect = document.getElementById("content").getBoundingClientRect();
+      return (
+        x > rect.left - 40 &&
+        x < rect.right + 40 &&
+        y > rect.top - 40 &&
+        y < rect.bottom + 40
+      );
+    }
 
-  /* ---------- Safe Zone (keeps text readable) ---------- */
-  function isInSafeZone(x, y) {
-    const rect = document.getElementById("content").getBoundingClientRect();
-    return (
-      x > rect.left - 40 &&
-      x < rect.right + 40 &&
-      y > rect.top - 40 &&
-      y < rect.bottom + 40
-    );
-  }
-
-  /* ---------- Falling Emojis ---------- */
-  const emojis = ["✨", "💛", "⭐", "🪔"];
-  const particles = [];
-
-  for (let i = 0; i < 90; i++) {
-    particles.push({
+    /* ---------- Falling Emojis ---------- */
+    const emojis = ["✨", "⭐", "🌟", "💫"];
+    const particles = Array.from({ length: 90 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       size: 16 + Math.random() * 10,
-      speed: 0.4 + Math.random() * 0.9,
+      speed: 0.4 + Math.random(),
       emoji: emojis[Math.floor(Math.random() * emojis.length)]
-    });
-  }
+    }));
 
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.y += p.speed;
+        if (p.y > canvas.height) {
+          p.y = -20;
+          p.x = Math.random() * canvas.width;
+        }
+        if (!isInSafeZone(p.x, p.y)) {
+          ctx.font = `${p.size}px serif`;
+          ctx.fillText(p.emoji, p.x, p.y);
+        }
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
 
-    particles.forEach(p => {
-      p.y += p.speed;
+    /* ---------- Celebration Logic ---------- */
+    const audio = document.getElementById("music");
+    let started = false;
 
-      if (p.y > canvas.height) {
-        p.y = -20;
-        p.x = Math.random() * canvas.width;
+    document.getElementById("startBtn").addEventListener("click", () => {
+      if (started) return;
+
+      const name = document.getElementById("nameInput").value.trim();
+      if (!name) {
+        alert("Please enter your name 😊");
+        return;
       }
 
-      if (!isInSafeZone(p.x, p.y)) {
-        ctx.font = `${p.size}px serif`;
-        ctx.fillText(p.emoji, p.x, p.y);
-      }
+      started = true;
+
+      document.getElementById("title").innerText =
+        `✨ Happy New Year ${name} ✨`;
+
+      document.getElementById("nameBox").style.display = "none";
+
+      audio.volume = 0.8;
+      audio.play().catch(() => {});
+
+      document.getElementById("blessing").style.opacity = 1;
+      document.getElementById("from").style.opacity = 1;
     });
-
-    requestAnimationFrame(animate);
-  }
-  animate();
-
-  /* ---------- Start Celebration (MUSIC FIX) ---------- */
-  const audio = document.getElementById("music");
-
-  document.getElementById("startBtn").addEventListener("click", () => {
-    audio.load();           // REQUIRED for mobile
-    audio.volume = 0.8;
-    audio.play().catch(() => {});
-
-    document.getElementById("blessing").style.opacity = 1;
-    document.getElementById("from").style.opacity = 1;
-    document.getElementById("startBtn").style.display = "none";
-  });
 </script>
 
 </body>

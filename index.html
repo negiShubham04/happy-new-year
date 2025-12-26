@@ -14,14 +14,14 @@
           font-family: "Segoe UI", sans-serif;
           color: #fff;
         }
-      
+
         canvas {
           position: fixed;
           top: 0;
           left: 0;
           z-index: 1;
         }
-      
+
         .content {
           position: absolute;
           top: 50%;
@@ -32,13 +32,13 @@
           padding: 25px;
           max-width: 90%;
         }
-      
+
         h1 {
           font-size: 3rem;
           text-shadow: 0 0 20px gold;
           margin-bottom: 10px;
         }
-      
+
         input {
           padding: 12px 16px;
           font-size: 1rem;
@@ -49,7 +49,7 @@
           text-align: center;
           margin-top: 10px;
         }
-      
+
         button {
           margin-top: 18px;
           padding: 14px 28px;
@@ -61,7 +61,7 @@
           color: #000;
           box-shadow: 0 0 15px gold;
         }
-      
+
         .blessing, .from {
           opacity: 0;
           transition: opacity 2s ease;
@@ -77,13 +77,7 @@
 
 <div class="content" id="content">
     <h1 id="title">✨ Happy New Year 2026 ✨</h1>
-
-    <!-- Name Input (hidden if URL has name) -->
-    <div id="nameBox">
-        <input id="nameInput" placeholder="Enter your name 🌸" />
-        <br>
-        <button id="startBtn">▶ Click to start</button>
-    </div>
+    
 
     <div class="blessing" id="blessing">
         🌼 May this New Year bring good health, peace, happiness
@@ -104,22 +98,22 @@
     /* ---------- Get name from URL ---------- */
     const params = new URLSearchParams(window.location.search);
     let name = params.get("name") || "";
-  
+
     const title = document.getElementById("title");
     const nameBox = document.getElementById("nameBox");
     const music = document.getElementById("music");
-  
+
     /* ---------- Canvas Setup ---------- */
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-  
+
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
     resize();
     window.addEventListener("resize", resize);
-  
+
     function isInSafeZone(x, y) {
       const rect = document.getElementById("content").getBoundingClientRect();
       return (
@@ -129,7 +123,7 @@
         y < rect.bottom + 40
       );
     }
-  
+
     /* ---------- Falling Emojis ---------- */
     const emojis = ["🪔", "✨", "⭐"];
     const particles = Array.from({ length: 90 }, () => ({
@@ -139,7 +133,7 @@
       speed: 0.4 + Math.random(),
       emoji: emojis[Math.floor(Math.random() * emojis.length)]
     }));
-  
+
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach(p => {
@@ -156,45 +150,40 @@
       requestAnimationFrame(animate);
     }
     animate();
-  
+
     /* ---------- Celebration Logic ---------- */
     function startCelebration(userName) {
       if(!userName) return;
       title.innerText = `✨ Happy New Year ${userName} ✨`;
-  
+
       nameBox.style.display = "none";
       document.getElementById("blessing").style.opacity = 1;
       document.getElementById("from").style.opacity = 1;
-  
+
       music.volume = 0.8;
       music.play().catch(()=>{});
     }
-  
+
     // Case 1: Name from URL → auto start
     if(name) {
       // Hide input box
       nameBox.style.display = "none";
-  
+
       // Auto-start after first user tap if required (mobile)
       const startFn = () => {
         startCelebration(name);
         document.removeEventListener("pointerdown", startFn);
       };
       document.addEventListener("pointerdown", startFn, { once: true });
-  
+
       // Optional: auto start on desktop if allowed
       window.addEventListener("load", () => startCelebration(name));
-  
+
     } else {
       // Case 2: Ask user for name
       const startBtn = document.getElementById("startBtn");
       startBtn.addEventListener("click", () => {
-        const inputName = document.getElementById("nameInput").value.trim();
-        if(!inputName) {
-          alert("Please enter your name 😊");
-          return;
-        }
-        startCelebration(inputName);
+        startCelebration('');
       });
     }
 </script>

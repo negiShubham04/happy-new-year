@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎉 Happy New Year 🎉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background: linear-gradient(135deg, #000428, #004e92);
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      color: white;
+    }
+
+    .center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 10px;
+      animation: glow 2s infinite alternate;
+    }
+
+    p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ffcc00; }
+      to   { text-shadow: 0 0 30px #ffcc00; }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti"></canvas>
+
+  <div class="center">
+    <h1>🎉 Happy New Year 2026 🎉</h1>
+    <p>Wishing you joy, success & endless code 🚀</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confettiCount = 250;
+    const confetti = [];
+
+    const emojis = ["🎊", "🎉", "✨", "💥"];
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    for (let i = 0; i < confettiCount; i++) {
+      confetti.push({
+        x: random(0, canvas.width),
+        y: random(0, canvas.height),
+        size: random(18, 30),
+        speed: random(1, 4),
+        emoji: emojis[Math.floor(Math.random() * emojis.length)]
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      confetti.forEach(c => {
+        ctx.font = `${c.size}px serif`;
+        ctx.fillText(c.emoji, c.x, c.y);
+
+        c.y += c.speed;
+        if (c.y > canvas.height) {
+          c.y = -20;
+          c.x = random(0, canvas.width);
+        }
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+
+</body>
+</html>

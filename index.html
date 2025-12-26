@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Happy New Year 2026 ✨</title>
+    <title>✨</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
@@ -13,15 +13,19 @@
           background: radial-gradient(circle at top, #1a2a6c, #000);
           font-family: "Segoe UI", sans-serif;
           color: #fff;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: default;
         }
-
+      
         canvas {
           position: fixed;
           top: 0;
           left: 0;
           z-index: 1;
         }
-
+      
         .content {
           position: absolute;
           top: 50%;
@@ -31,42 +35,44 @@
           z-index: 2;
           padding: 25px;
           max-width: 90%;
+          display: none;
         }
-
+      
         h1 {
           font-size: 3rem;
           text-shadow: 0 0 20px gold;
           margin-bottom: 10px;
         }
-
-        input {
-          padding: 12px 16px;
-          font-size: 1rem;
-          border-radius: 25px;
-          border: none;
-          outline: none;
-          width: 220px;
-          text-align: center;
-          margin-top: 10px;
-        }
-
-        button {
-          margin-top: 18px;
-          padding: 14px 28px;
-          font-size: 1.1rem;
-          border-radius: 30px;
-          border: none;
-          cursor: pointer;
-          background: gold;
-          color: #000;
-          box-shadow: 0 0 15px gold;
-        }
-
-        .blessing, .from {
+      
+        .blessing {
           opacity: 0;
           transition: opacity 2s ease;
           margin-top: 18px;
           line-height: 1.5;
+        }
+      
+        button#startBtn {
+          padding: 20px 40px;
+          font-size: 1.3rem;
+          border-radius: 50px;
+          border: none;
+          cursor: pointer;
+          background: linear-gradient(45deg, gold, #ffd700, #ffec8b);
+          color: #000;
+          box-shadow: 0 0 20px gold, 0 0 40px gold, 0 0 60px gold;
+          animation: pulse 1.5s infinite alternate, bounce 2s infinite;
+          z-index: 2;
+        }
+      
+        @keyframes pulse {
+          0% { box-shadow: 0 0 15px gold, 0 0 30px gold; transform: scale(1); }
+          50% { box-shadow: 0 0 25px gold, 0 0 50px gold; transform: scale(1.05); }
+          100% { box-shadow: 0 0 15px gold, 0 0 30px gold; transform: scale(1); }
+        }
+      
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-10px) scale(1.05); }
         }
     </style>
 </head>
@@ -75,56 +81,34 @@
 
 <canvas id="canvas"></canvas>
 
-<div class="content" id="content">
-    <h1 id="title">✨ Happy New Year 2026 ✨</h1>
-    
+<button id="startBtn">✨ Tap to open ✨</button>
 
+<div class="content" id="content">
+    <h1>✨ Happy New Year 2026 ✨</h1>
     <div class="blessing" id="blessing">
         🌼 May this New Year bring good health, peace, happiness
         and prosperity to you and your family 🌼
     </div>
-
     <div class="from" id="from">
-        🙏 From<br>Shubham Negi
+        🙏 From,<br>Shubham Negi
     </div>
 </div>
 
-<!-- 🎵 Background Music -->
 <audio id="music" preload="auto" loop>
     <source src="song.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-    /* ---------- Get name from URL ---------- */
-    const params = new URLSearchParams(window.location.search);
-    let name = params.get("name") || "";
-
-    const title = document.getElementById("title");
-    const nameBox = document.getElementById("nameBox");
-    const music = document.getElementById("music");
-
-    /* ---------- Canvas Setup ---------- */
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-
+  
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
     resize();
     window.addEventListener("resize", resize);
-
-    function isInSafeZone(x, y) {
-      const rect = document.getElementById("content").getBoundingClientRect();
-      return (
-        x > rect.left - 40 &&
-        x < rect.right + 40 &&
-        y > rect.top - 40 &&
-        y < rect.bottom + 40
-      );
-    }
-
-    /* ---------- Falling Emojis ---------- */
+  
     const emojis = ["🪔", "✨", "⭐"];
     const particles = Array.from({ length: 90 }, () => ({
       x: Math.random() * canvas.width,
@@ -133,16 +117,17 @@
       speed: 0.4 + Math.random(),
       emoji: emojis[Math.floor(Math.random() * emojis.length)]
     }));
-
+  
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach(p => {
         p.y += p.speed;
-        if (p.y > canvas.height) {
+        if(p.y > canvas.height){
           p.y = -20;
           p.x = Math.random() * canvas.width;
         }
-        if (!isInSafeZone(p.x, p.y)) {
+        const rect = document.getElementById("content").getBoundingClientRect();
+        if(!(p.x > rect.left-40 && p.x < rect.right+40 && p.y > rect.top-40 && p.y < rect.bottom+40)){
           ctx.font = `${p.size}px serif`;
           ctx.fillText(p.emoji, p.x, p.y);
         }
@@ -150,42 +135,21 @@
       requestAnimationFrame(animate);
     }
     animate();
-
-    /* ---------- Celebration Logic ---------- */
-    function startCelebration(userName) {
-      if(!userName) return;
-      title.innerText = `✨ Happy New Year ${userName} ✨`;
-
-      nameBox.style.display = "none";
-      document.getElementById("blessing").style.opacity = 1;
-      document.getElementById("from").style.opacity = 1;
-
+  
+    const startBtn = document.getElementById("startBtn");
+    const content = document.getElementById("content");
+    const blessing = document.getElementById("blessing");
+    const music = document.getElementById("music");
+  
+    startBtn.addEventListener("click", () => {
+      startBtn.style.display = "none";
+      content.style.display = "block";
+  
+      blessing.style.opacity = 1;
+  
       music.volume = 0.8;
       music.play().catch(()=>{});
-    }
-
-    // Case 1: Name from URL → auto start
-    if(name) {
-      // Hide input box
-      nameBox.style.display = "none";
-
-      // Auto-start after first user tap if required (mobile)
-      const startFn = () => {
-        startCelebration(name);
-        document.removeEventListener("pointerdown", startFn);
-      };
-      document.addEventListener("pointerdown", startFn, { once: true });
-
-      // Optional: auto start on desktop if allowed
-      window.addEventListener("load", () => startCelebration(name));
-
-    } else {
-      // Case 2: Ask user for name
-      const startBtn = document.getElementById("startBtn");
-      startBtn.addEventListener("click", () => {
-        startCelebration('');
-      });
-    }
+    });
 </script>
 
 </body>
